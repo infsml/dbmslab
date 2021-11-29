@@ -1,0 +1,103 @@
+﻿mysql> select ename from employee where salary > (select salary from employee where ename='Pablo');
++---------+
+| ename   |
++---------+
+| Ramirez |
+| Mona    |
++---------+
+2 rows in set (0.01 sec)
+
+mysql> select ename,dno from employee where dno in (select dno from department where location='Mars');
++-------+------+
+| ename | dno  |
++-------+------+
+| Pablo |  102 |
+| Kate  |  104 |
++-------+------+
+2 rows in set (0.00 sec)
+
+mysql> select ename from employee where dno in (select dno from department where dname in('Science','NotSci'));
++---------+
+| ename   |
++---------+
+| Ramirez |
+| Pablo   |
+| Mona    |
++---------+
+3 rows in set (0.00 sec)
+
+mysql> select ename,salary from employee where salary = (select max(salary) from employee);
++---------+----------+
+| ename   | salary   |
++---------+----------+
+| Ramirez | 50000.00 |
++---------+----------+
+1 row in set (0.00 sec)
+
+mysql> select ename,salary from employee where salary > (select avg(salary) from employee);
++---------+----------+
+| ename   | salary   |
++---------+----------+
+| Ramirez | 50000.00 |
++---------+----------+
+1 row in set (0.00 sec)
+
+mysql> select ename,doj from employee where doj > (select doj from employee where ename='Pablo');
++---------+------------+
+| ename   | doj        |
++---------+------------+
+| Ramirez | 2001-09-25 |
+| Lisa    | 2002-06-10 |
++---------+------------+
+2 rows in set (0.00 sec)
+
+mysql> select ename from employee where doj = (select min(doj) from employee);
++-------+
+| ename |
++-------+
+| Mona  |
++-------+
+1 row in set (0.00 sec)
+
+mysql> select ename from employee where sno in (select eno from employee where ename='Ramirez');
++---------+
+| ename   |
++---------+
+| Ramirez |
+| Pablo   |
+| Lisa    |
++---------+
+3 rows in set (0.02 sec)
+
+mysql> select ename,eno from employee where eno=(select sno from employee where eno=(select sno from employee where ename='Kate'));
++---------+-----+
+| ename   | eno |
++---------+-----+
+| Ramirez | 201 |
++---------+-----+
+1 row in set (0.00 sec)
+
+
+mysql> select dname from department where dno=(select dno from project where pname='Booster');
++-------+
+| dname |
++-------+
+| Art   |
++-------+
+1 row in set (0.00 sec)
+
+
+mysql> select ename,dname from employee e inner join department d where e.dno=d.dno;
++---------+---------+
+| ename   | dname   |
++---------+---------+
+| Ramirez | Science |
+| Pablo   | NotSci  |
+| Lisa    | NotArt  |
+| Mona    | Science |
+| Kate    | Mobile  |
++---------+---------+
+5 rows in set (0.00 sec)
+
+mysql> select ename,dname from employee e inner join department d where e.dno=d.dno and dname in ('Science','NotSci')^C
+mysql> 
