@@ -1,4 +1,21 @@
-﻿mysql> select ename from employee where salary > (select salary from employee where ename='Pablo');
+﻿create table department(dno int primary key, dname varchar(20) unique,location varchar(20));
+Query OK, 0 rows affected (0.31 sec)
+
+mysql> create table employee(eno int primary key, ename varchar(20) not null, doj date, salary decimal(10,2), address varchar(20),gender varchar(3),job varchar(20),dno int,sno int,foreign key(dno) references department(dno), foreign key(sno) references employee(eno) on delete cascade on update cascade);
+Query OK, 0 rows affected (0.32 sec)
+
+mysql> create table project(pid varchar(4) primary key, pname varchar(20) unique, plocation varchar(10),dno int,foreign key(dno) references department(dno) on delete cascade on update cascade);
+Query OK, 0 rows affected (0.42 sec)
+
+mysql> create table dependent(ename varchar(15) PRIMARY KEY, gender varchar(8),
+dob date, relation varchar(20),eno int,foreign key(eno) references employee(eno));
+Query OK, 0 rows affected (0.31 sec)
+
+mysql> create table workson(eno int,pid varchar(4),hours int, primary key(eno,pid),foreign key(eno) references employee(eno) on delete cascade on update cascade, foreign key(pid) references project(pid) on delete cascade on update cascade);
+Query OK, 0 rows affected (0.29 sec)
+
+
+mysql> select ename from employee where salary > (select salary from employee where ename='Pablo');
 +---------+
 | ename   |
 +---------+
@@ -87,6 +104,20 @@ mysql> select dname from department where dno=(select dno from project where pna
 1 row in set (0.00 sec)
 
 
+
+
+
+
+
+
+
+
+
+
+
+Join
+
+
 mysql> select ename,dname from employee e inner join department d where e.dno=d.dno;
 +---------+---------+
 | ename   | dname   |
@@ -99,5 +130,54 @@ mysql> select ename,dname from employee e inner join department d where e.dno=d.
 +---------+---------+
 5 rows in set (0.00 sec)
 
-mysql> select ename,dname from employee e inner join department d where e.dno=d.dno and dname in ('Science','NotSci')^C
+mysql> select ename,dname from employee e inner join department d where e.dno=d.dno and job in ('Astronaut','Music');
++---------+---------+
+| ename   | dname   |
++---------+---------+
+| Ramirez | Science |
+| Mona    | Science |
+| Kate    | Mobile  |
++---------+---------+
+3 rows in set (0.00 sec)
+
+mysql> select ename,salary,location from employee e inner join department d where e.dno=d.dno and salary>25000;
++---------+----------+----------+
+| ename   | salary   | location |
++---------+----------+----------+
+| Ramirez | 50000.00 | Earth    |
+| Mona    | 26000.00 | Earth    |
+| Kate    | 26000.00 | Mars     |
++---------+----------+----------+
+3 rows in set (0.00 sec)
+
+mysql> select dname,count(eno) from employee e join department d where e.dno=d.dno group by d.dno;
++---------+------------+
+| dname   | count(eno) |
++---------+------------+
+| Science |          2 |
+| NotSci  |          1 |
+| NotArt  |          1 |
+| Mobile  |          1 |
++---------+------------+
+4 rows in set (0.00 sec)
+
+mysql> select pname,sum(hours) from project p join workson w where p.pid=w.pid group by p.pid;
++----------+------------+
+| pname    | sum(hours) |
++----------+------------+
+| Flight   |         25 |
+| Booster  |         47 |
+| SubZero  |         28 |
+| Negation |         19 |
++----------+------------+
+4 rows in set (0.00 sec)
+
+mysql> select dname from project p join department d where p.dno=d.dno and p.pname='Booster';
++-------+
+| dname |
++-------+
+| Art   |
++-------+
+1 row in set (0.01 sec)
+
 mysql> 
