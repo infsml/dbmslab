@@ -180,4 +180,14 @@ mysql> select dname from project p join department d where p.dno=d.dno and p.pna
 +-------+
 1 row in set (0.01 sec)
 
-mysql> 
+mysql> select e.eno,doj,location from project p join employee e join department d join workson w where w.eno=e.eno and p.pid=w.pid and e.dno=d.dno and p.pname in ('Booster','Flight');
++-----+------------+----------+
+| eno | doj        | location |
++-----+------------+----------+
+| 202 | 2001-08-10 | Mars     |
+| 203 | 2002-06-10 | Pluto    |
+| 201 | 2001-09-25 | Earth    |
++-----+------------+----------+
+3 rows in set (0.00 sec)
+
+
