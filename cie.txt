@@ -1,0 +1,6 @@
+select sname from supplier where sname like 's%a';
+update supplier 
+    -> set designation='Jr'
+    -> where designation='Trainee' and registration_date<'2016-01-01';
+select p.pid,p.pname,p.color from part p,(select pid,sum(quantity) as sm
+from supply group by pid) s where s.sm>50 and s.pid=p.pid;
