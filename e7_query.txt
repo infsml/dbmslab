@@ -2,13 +2,64 @@ create view q1 as select eno,ename from employee where dno=100;
 
 create view q2 as select dname,count(eno) as no_of_employees from employee e,department d where e.dno=d.dno group by e.dno order by dname desc;
 
++---------+-----------------+
+| dname   | no_of_employees |
++---------+-----------------+
+| Science |               2 |
+| NotSci  |               1 |
+| NotArt  |               1 |
+| Mobile  |               1 |
++---------+-----------------+
+
+
+
 create view q3 as select ename from employee e,project p,workson w where e.eno=w.eno and
 p.pid=w.pid and p.pname='Booster' and e.salary>24500 and e.salary<30000;
 
++-------+
+| ename |
++-------+
+| Pablo |
++-------+
+
+
+
 create view q4 as select ename,dname from employee e,department d where e.dno=d.dno;
++---------+---------+
+| ename   | dname   |
++---------+---------+
+| Ramirez | Science |
+| Pablo   | NotSci  |
+| Lisa    | NotArt  |
+| Mona    | Science |
+| Kate    | Mobile  |
++---------+---------+
+
+
 
 create view q5 as select eno,ename from employee where eno in (select sno from employee);
++-----+---------+
+| eno | ename   |
++-----+---------+
+| 201 | Ramirez |
+| 202 | Pablo   |
+| 203 | Lisa    |
++-----+---------+
+
 
 create view q6 as select dname,pname from department d,project p where d.dno=p.dno and d.dname='NotSci';
++--------+---------+
+| dname  | pname   |
++--------+---------+
+| NotSci | SubZero |
++--------+---------+
+
 
 create view q7 as select ename,pname from employee e,department d,workson w, project p where e.dno=d.dno and w.eno=e.eno and w.pid=p.pid and d.dname='Science';
++---------+----------+
+| ename   | pname    |
++---------+----------+
+| Ramirez | Flight   |
+| Mona    | Negation |
++---------+----------+
+
