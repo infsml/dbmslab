@@ -1,0 +1,22 @@
+mysql> create table hotel(code int, name varchar(20),address varchar(20),established_date date);
+Query OK, 0 rows affected (0.30 sec)
+
+mysql> create table customer(cid int, cname varchar(20),age int, checkin date,checkout date,hotel_code int,amount int);
+Query OK, 0 rows affected (0.25 sec)
+
+mysql> create table checked_out(sdate date,usr varchar(20),cusid int);
+Query OK, 0 rows affected (0.27 sec)
+
+mysql> create trigger t1 before update on customer for each row begin if new.checkout is not null then insert into checked_out values(sysdate(),user(),new.cid);
+ end if; end##
+
+
+create view v1 as select h.name,sum(c.amount) from hotel h,customer c where h.code=c.hotel_code and year(c.checkin)=2018 group by h.name##
+
+
+mysql> create trigger t2 after insert on customer for each row begin
+    -> if new.age < 18 then
+    -> SIGNAL SQLSTATE '02000' SET MESSAGE_TEXT = 'age less than 18 not allowed';
+    -> delete from customer where cid=new.cid;
+    -> end if;
+    -> end##
