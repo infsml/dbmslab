@@ -1,0 +1,32 @@
+cqlsh> create keyspace k1 with replication={'class':'SimpleStrategy','replication_factor':3};
+cqlsh> use k1;
+cqlsh:k1> create table t1(id int primary key,name text,phno int);
+cqlsh:k1> insert into t1(id,name,phno) values (1,'me',999),(2,'you',888),(3,'him',666);
+SyntaxException: line 1:48 mismatched input ',' expecting EOF (... values (1,'me',999)[,]...)
+cqlsh:k1> insert into t1(id,name,phno) values (1,'me',999);cqlsh:k1> insert into t1(id,name,phno) values (2,'you',888);cqlsh:k1> insert into t1(id,name,phno) values (3,'him',666);cqlsh:k1> select * from t1;
+
+ id | name | phno
+----+------+------
+  1 |   me |  999
+  2 |  you |  888
+  3 |  him |  666
+
+(3 rows)
+cqlsh:k1> update t1 set name='them' where id=3;
+cqlsh:k1> select * from t1;
+
+ id | name | phno
+----+------+------
+  1 |   me |  999
+  2 |  you |  888
+  3 | them |  666
+
+(3 rows)
+cqlsh:k1> delete from t1 where id=3;
+cqlsh:k1> select * from t1;
+
+ id | name | phno
+----+------+------
+  1 |   me |  999
+  2 |  you |  888
+
