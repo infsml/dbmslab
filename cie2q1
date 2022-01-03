@@ -1,0 +1,65 @@
+mysql> create table customer(custid int, custname varchar(20), age int, phno int);
+Query OK, 0 rows affected (0.41 sec)
+
+mysql> create table hloan(hloanid int,amount int,custid int);
+Query OK, 0 rows affected (0.28 sec)
+
+mysql> create table vloan(vloanid int,amount int,custid int);
+Query OK, 0 rows affected (0.28 sec)
+
+mysql> create table hcount(cnt int)##
+Query OK, 0 rows affected (0.25 sec)
+
+mysql> create table vcount(cnt int)##
+Query OK, 0 rows affected (0.29 sec)
+
+mysql> create trigger t1 after insert on hloan for each row begin
+    -> delete from hcount;
+    -> insert into hcount select count(*) from hloan;
+    -> end##
+Query OK, 0 rows affected (0.08 sec)
+
+mysql> create trigger t2 after insert on vloan for each row begin delete from vcount; insert into vcount select count(*) from vloan; end##
+Query OK, 0 rows affected (0.08 sec)
+
+mysql> -- cysql> create trigger t3 after insert on customer for eac
+mysql> create trigger t3 after insert on customer for each row begin
+    -> if new.age < 18 then
+    -> SIGNAL SQLSTATE '02000' SET MESSAGE_TEXT = 'age less than 18 not allowed';
+    -> delete from customer where cid=new.cid;
+    -> end if;
+    -> end
+    -> ##
+ERROR 1054 (42S22): Unknown column 'cid' in 'NEW'
+mysql> create trigger t3 after insert on customer for each row begin if new.age < 18 then SIGNAL SQLSTATE '02000' SET MESSAGE_TEXT = 'age less than 18 not allowed'; delete from customer where custid=new.custid; end if; end##
+Query OK, 0 rows affected (0.07 sec)
+
+mysql> insert into customer values(1,'a',9,999)##
+ERROR 1643 (02000): age less than 18 not allowed
+mysql> insert into customer values(1,'a',20,999)##
+Query OK, 1 row affected (0.05 sec)
+
+mysql> insert into hloan(21,20000,1)##
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '21,20000,1)' at line 1
+mysql> insert into hloan values(21,20000,1)##
+Query OK, 1 row affected (0.05 sec)
+
+mysql> select * from hcount##
++------+
+| cnt  |
++------+
+|    1 |
++------+
+1 row in set (0.00 sec)
+
+mysql> insert into vloan values(21,20000,1)##
+Query OK, 1 row affected (0.06 sec)
+
+mysql> select * from vcount##
++------+
+| cnt  |
++------+
+|    1 |
++------+
+1 row in set (0.00 sec)
+
